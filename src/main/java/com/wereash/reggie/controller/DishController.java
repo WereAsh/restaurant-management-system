@@ -119,4 +119,26 @@ public class DishController {
         return R.success(list);
     }
 
+    /*
+    * 根据id删除菜品
+    * */
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids){
+        log.info("删除的菜品id为：{}",ids);
+        dishService.deleteById(ids);
+        return R.success("菜品信息删除成功");
+    }
+
+    @PostMapping("/status/1")
+    public R<String> setStatus21(@RequestParam List<Long> ids){
+        log.info("要更新的状态的菜品id：{}",ids);
+        dishService.updateStatus2OneById(ids);
+        return R.success("修改菜品状态成功");
+    }
+    @PostMapping("/status/0")
+    public R<String> setStatus20(@RequestParam List<Long> ids){
+        log.info("要更新的状态的菜品id：{}",ids);
+        dishService.updateStatus2ZeroById(ids);
+        return R.success("修改菜品状态成功");
+    }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wereash.reggie.common.CustomException;
 import com.wereash.reggie.dto.SetmealDto;
+import com.wereash.reggie.entity.Category;
 import com.wereash.reggie.entity.Setmeal;
 import com.wereash.reggie.entity.SetmealDish;
 import com.wereash.reggie.mapper.SetmealMapper;
@@ -65,5 +66,27 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
         setmealDishService.remove(queryWrapper1);
 
+    }
+    @Override
+    public void updateStatus2One(List<Long> ids) {
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Setmeal::getId,ids);
+        List<Setmeal> list = list(queryWrapper);
+        list.forEach(setmeal -> {
+            setmeal.setStatus(1);
+            this.updateById(setmeal);
+        });
+
+    }
+
+    @Override
+    public void updateStatus2Zero(List<Long> ids) {
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Setmeal::getId,ids);
+        List<Setmeal> list = list(queryWrapper);
+        list.forEach(setmeal -> {
+            setmeal.setStatus(0);
+            this.updateById(setmeal);
+        });
     }
 }

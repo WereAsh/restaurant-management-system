@@ -83,4 +83,16 @@ public class SetMealController {
         setmealService.removeWithDish(ids);
         return R.success("删除成功！");
     }
+    @PostMapping("/status/1")
+    public R<String> setStatus21(@RequestParam List<Long> ids){
+        log.info("{}",ids);
+        setmealService.updateStatus2One(ids);
+        return R.success("修改分类状态成功");
+    }
+    @PostMapping("/status/0")
+    public R<String> setStatus20(@RequestParam List<Long> ids){
+        log.info("{}",ids);
+        setmealService.updateStatus2Zero(ids);
+        return R.success("修改分类状态成功");
+    }
 }
