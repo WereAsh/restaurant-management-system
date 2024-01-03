@@ -2,12 +2,16 @@ package com.wereash.reggie.service.imp;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wereash.reggie.common.CustomException;
 import com.wereash.reggie.dto.DishDto;
 import com.wereash.reggie.entity.Dish;
 import com.wereash.reggie.entity.DishFlavor;
+import com.wereash.reggie.entity.Setmeal;
+import com.wereash.reggie.entity.SetmealDish;
 import com.wereash.reggie.mapper.DishMapper;
 import com.wereash.reggie.service.DishFlavorService;
 import com.wereash.reggie.service.DishService;
+import com.wereash.reggie.service.SetmealDishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
+
+    @Autowired
+    private SetmealDishService setmealDishService;
 
     @Autowired
     private DishFlavorService dishFlavorService;
@@ -88,7 +95,20 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Override
     public void deleteById(List<Long> ids) {
-        removeByIds(ids);
+        LambdaQueryWrapper<Dish> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.in(Dish::getId,ids);
+        queryWrapper.eq(Dish::getStatus,1);
+        int count=this.count(queryWrapper);
+        if(count>0){
+            throw new CustomException("菜品正在售卖中，不能删除！");
+        }
+        this.removeByIds(ids);
+        /*
+        * 删除菜品以及对应的套餐
+        * */
+        LambdaQueryWrapper<SetmealDish> queryWrapper1=new LambdaQueryWrapper<>();
+        queryWrapper1.in(SetmealDish::getDishId,ids);
+        setmealDishService.remove(queryWrapper1);
     }
 
     @Override
