@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,4 +85,34 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         flavors.forEach(f->f.setDishId(dishDto.getId()));
         dishFlavorService.saveBatch(flavors);
     }
+
+    @Override
+    public void deleteById(List<Long> ids) {
+        removeByIds(ids);
+    }
+
+    @Override
+    public void updateStatus2OneById(List<Long> ids) {
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Dish::getId, ids);
+        List<Dish> list = this.list(queryWrapper);
+        list.forEach(dish -> {
+            dish.setStatus(1);
+            updateById(dish);
+        });;
+
+    }
+
+    @Override
+    public void updateStatus2ZeroById(List<Long> ids) {
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Dish::getId, ids);
+        List<Dish> list = this.list(queryWrapper);
+        list.forEach(dish -> {
+            dish.setStatus(0);
+            updateById(dish);
+        });
+    }
+
+
 }
