@@ -61,7 +61,7 @@ public class FileController {
             //输出流，通过输出流将文件写回浏览器，在浏览器展示图片了
             ServletOutputStream  outputStream=response.getOutputStream();
 
-            response.setContentType("image/jpeg");
+            response.setContentType("image/jpg");
 
             int len=0;
             byte[] bytes=new byte[1024];
