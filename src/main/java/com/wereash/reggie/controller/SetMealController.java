@@ -6,6 +6,7 @@ import com.wereash.reggie.common.R;
 import com.wereash.reggie.dto.SetmealDto;
 import com.wereash.reggie.entity.Category;
 import com.wereash.reggie.entity.Setmeal;
+import com.wereash.reggie.entity.SetmealDish;
 import com.wereash.reggie.service.CategoryService;
 import com.wereash.reggie.service.SetmealDishService;
 import com.wereash.reggie.service.SetmealService;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +34,16 @@ public class SetMealController {
     @Autowired
     private CategoryService categoryService;
 
+    @GetMapping("/{id}")
+    public R<SetmealDto> getSetmealByDish(@PathVariable Long id){
+        log.info("setmeal id= {}",id);
+        SetmealDto setmealDto = setmealDishService.getSetmealDto(id);
+
+
+
+        return R.success(setmealDto);
+    }
+
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info("新增菜品信息：{}",setmealDto);
@@ -39,6 +51,12 @@ public class SetMealController {
         setmealService.saveWithDish(setmealDto);
 
         return R.success("新增套餐成功！");
+    }
+
+    @PutMapping
+    public R<String> savaModify(@RequestBody SetmealDto setmealDto){
+        setmealService.updateById(setmealDto);
+        return R.success("修改套餐成功！");
     }
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
