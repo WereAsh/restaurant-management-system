@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -26,8 +24,8 @@ import java.util.UUID;
 @RequestMapping("/common")
 public class FileController {
 
-    @Value("${reggie.path}")
-    private String basePath;
+    @Value("${image.uploadPath}")
+    private String uploadBasePath;
     /*
     * 此处的参数名必须与前端发送请求中的name一致
     * */
@@ -43,12 +41,12 @@ public class FileController {
         String fileName=s+suffix;
 
         //创建一个目录对象,判断是否存在，不存在则创建目录
-        File dir=new File(basePath);
+        File dir=new File(uploadBasePath);
         if (!dir.exists()){
             dir.mkdirs();
         }
         try {
-            file.transferTo(new File(basePath+fileName));
+            file.transferTo(new File(uploadBasePath+fileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -59,7 +57,7 @@ public class FileController {
 
         try {
             //输出流，通过输入流读取文件内容
-            FileInputStream fileInputStream=new FileInputStream(new File(basePath+name));
+            FileInputStream fileInputStream=new FileInputStream(new File(uploadBasePath+name));
             //输出流，通过输出流将文件写回浏览器，在浏览器展示图片了
             ServletOutputStream  outputStream=response.getOutputStream();
 
